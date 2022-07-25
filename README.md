@@ -2,26 +2,26 @@
 
 ## Description
 
-This agent detects transactions with large Tether transfers
+This agent checks for Forta Agents deployed from Nethermind's Forta Deployer Address
 
 ## Supported Chains
 
-- Ethereum
-- List any other chains this agent can support e.g. BSC
+- Polygon
+  - `chainId` 137
 
 ## Alerts
 
 Describe each of the type of alerts fired by this agent
 
-- FORTA-1
-  - Fired when a transaction contains a Tether transfer over 10,000 USDT
-  - Severity is always set to "low" (mention any conditions where it could be something else)
-  - Type is always set to "info" (mention any conditions where it could be something else)
-  - Mention any other type of metadata fields included with this alert
+- DEPLOY-1
+  - Alert fired when a Forta agent is deployed by Nethermind's Forta Deployer
+  - Severity is always set to "low"
+  - Type is always set to "info"
+  - Metadata includes # include metadata items here #
 
 ## Test Data
+The agents behaviour can be tested by running `npm test` 
 
 The agent behaviour can be verified with the following transactions:
+- # include test transaction here #
 
-- 0x3a0f757030beec55c22cbc545dd8a844cbbb2e6019461769e1bc3f3a95d10826 (15,000 USDT)
-# deployment-detector-bot
