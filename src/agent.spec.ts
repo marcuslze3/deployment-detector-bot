@@ -11,12 +11,14 @@ import agent, {
   FORTA_CONTRACT_ADDRESS,
   BOT_DEPLOY_FUNC,
 } from "./agent";
-
+import { Interface } from "ethers/lib/utils";
 import { TestTransactionEvent } from "forta-agent-tools/lib/tests";
+
+// const used for tests
+const IFACE = new Interface([BOT_DEPLOY_FUNC]);
 
 describe("nethermind new agent deployment bot", () => {
   let handleTransaction: HandleTransaction;
-  //const mockTxEvent = createTransactionEvent({} as any);
 
   beforeAll(() => {
     handleTransaction = agent.handleTransaction;
@@ -26,16 +28,10 @@ describe("nethermind new agent deployment bot", () => {
     // first test
     it("returns empty findings if no agent deployed", async () => {
       const mockTxEvent = new TestTransactionEvent();
-      mockTxEvent.filterFunction = jest.fn().mockReturnValue([]);
-      const findings = await handleTransaction(mockTxEvent);
+      const findings: Finding[] = await handleTransaction(mockTxEvent);
 
       // expect empty return since no agent deployed
       expect(findings).toStrictEqual([]);
-      expect(mockTxEvent.filterFunction).toHaveBeenCalledTimes(1);
-      expect(mockTxEvent.filterFunction).toHaveBeenCalledWith(
-        BOT_DEPLOY_FUNC,
-        FORTA_CONTRACT_ADDRESS
-      );
     });
 
     // second test
@@ -43,24 +39,28 @@ describe("nethermind new agent deployment bot", () => {
       const mockTxEvent = new TestTransactionEvent()
         .setFrom("0xabc")
         .setTo(FORTA_CONTRACT_ADDRESS);
-      mockTxEvent.filterFunction = jest.fn().mockReturnValue([]);
-      const findings = await handleTransaction(mockTxEvent);
+      const findings: Finding[] = await handleTransaction(mockTxEvent);
 
       expect(findings).toStrictEqual([]);
-      expect(mockTxEvent.filterFunction).toHaveBeenCalledTimes(1);
-      expect(mockTxEvent.filterFunction).toHaveBeenCalledWith(
-        BOT_DEPLOY_FUNC,
-        FORTA_CONTRACT_ADDRESS
-      );
     });
 
     // third test
     it("returns findings if agent deployed by Nethermind", async () => {
       const mockTxEvent = new TestTransactionEvent()
         .setFrom(NETHERMIND_DEPLOYER_ADDRESS)
-        .setTo(FORTA_CONTRACT_ADDRESS);
+        .setTo(FORTA_CONTRACT_ADDRESS)
+        .addTraces({
+          to: FORTA_CONTRACT_ADDRESS,
+          from: NETHERMIND_DEPLOYER_ADDRESS,
+          input: IFACE.encodeFunctionData("createAgent", [
+            "100",
+            NETHERMIND_DEPLOYER_ADDRESS,
+            "example metadata",
+            [137]
+          ])
+        })
 
-      const findings = await handleTransaction(mockTxEvent);
+      const findings: Finding[] = await handleTransaction(mockTxEvent);
 
       // expect findings since Agent deployed by Nethermind
       expect(findings).toStrictEqual([
