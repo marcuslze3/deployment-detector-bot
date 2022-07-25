@@ -22,6 +22,11 @@ const handleTransaction: HandleTransaction = async (
 ) => {
   const findings: Finding[] = [];
 
+  // if txEvent isn't from Nethermind, no need to process further
+  if (txEvent.from != NETHERMIND_DEPLOYER_ADDRESS.toLowerCase()) {
+    return findings;
+  }
+
   // filter the transaction logs for the Nethermind deployer create agent function
   // returns an array of transaction logs that have called the createAgent function on the Forta contract addresss
   const nethermindDeployAgentCalls = txEvent.filterFunction(
@@ -29,23 +34,23 @@ const handleTransaction: HandleTransaction = async (
     FORTA_CONTRACT_ADDRESS
   );
 
-  console.log("here");
   nethermindDeployAgentCalls.forEach((deployCalls) => {
     // extract deploy bot event arguments
     const { agentId, owner, metadata, chainIds } = deployCalls.args;
-    // if the owner is nethermind deployer, report it
-    console.log(deployCalls.args);
+
+    // if the txEvent originated from Nethermind, push the alert to findings
     if (
-      txEvent.from == NETHERMIND_DEPLOYER_ADDRESS.toLowerCase() &&
-      txEvent.to == FORTA_CONTRACT_ADDRESS.toLowerCase()
+      txEvent.from == NETHERMIND_DEPLOYER_ADDRESS.toLowerCase()
+
+      // is this check valid also? to see if owner is Nethermind's address
+      //owner == NETHERMIND_DEPLOYER_ADDRESS
     ) {
-      console.log("detected!");
 
       findings.push(
         Finding.fromObject({
           name: "Nethermind Deployed Forta Agent",
           description: "Nethermind has just deployed a Forta Agent",
-          alertId: "DEPLOY-" + findingsCount.toString(),
+          alertId: "DEPLOY-1",
           severity: FindingSeverity.Low,
           type: FindingType.Info,
           metadata: {},
