@@ -1,9 +1,10 @@
 {
-  "name": "forta-agent-starter",
+  "name": "challenge-1-bots-deployment",
   "version": "0.0.1",
-  "description": "Forta Agent Typescript starter project",
+  "description": "Bot to detect when agents are deployed",
+  "repository": "https://github.com/marcuslze3/deployment-detector-bot",
   "chainIds": [
-    1
+    137
   ],
   "scripts": {
     "build": "tsc",
@@ -21,7 +22,8 @@
     "disable": "forta-agent disable",
     "enable": "forta-agent enable",
     "keyfile": "forta-agent keyfile",
-    "test": "jest"
+    "test": "jest",
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
     "forta-agent": "^0.1.9"
@@ -31,6 +33,7 @@
     "@types/nodemon": "^1.19.0",
     "jest": "^27.0.6",
     "nodemon": "^2.0.8",
+    "prettier": "^2.7.1",
     "ts-jest": "^27.0.3",
     "typescript": "^4.3.4"
   }
